@@ -10,12 +10,14 @@ LDFLAGS := -s -w -X cliproxyapi-oauth/internal/plugin.Version=$(VERSION) -X clip
 .PHONY: build check-target freebsd test check integration release-snapshot
 build: check-target
 	CGO_ENABLED=1 $(GO) build -trimpath -buildvcs=false -buildmode=c-shared -ldflags '$(LDFLAGS)' -o '$(LIBRARY)' ./cmd/plugin
-	$(GO) run ./cmd/checklib -path '$(LIBRARY)' -goos '$(GOOS)' -goarch '$(GOARCH)'
+	# The validator reads target artifacts but must execute on the build host.
+	GOOS="$$($(GO) env GOHOSTOS)" GOARCH="$$($(GO) env GOHOSTARCH)" CGO_ENABLED=0 $(GO) run ./cmd/checklib -path '$(LIBRARY)' -goos '$(GOOS)' -goarch '$(GOARCH)'
 
 test:
 	$(GO) test -race -timeout 90s -count=1 ./...
 
 check:
+	MAKE='$(MAKE)' sh ./scripts/test-build.sh
 	@for script in scripts/*.sh; do sh -n "$$script"; done
 	@test -z "$$(gofmt -l cmd internal integration)" || (echo 'Run gofmt -w cmd internal integration'; exit 1)
 	$(GO) vet ./...

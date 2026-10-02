@@ -32,7 +32,7 @@ if [ ! -f "$sysroot/.verified-base-sha256" ]; then
     echo 'Refusing to overwrite an unverified sysroot; select a fresh FREEBSD_CACHE_DIR.' >&2
     exit 1
   fi
-  if ! printf '%s  %s\n' "$base_sha256" "$archive" | sha256sum --check --status 2>/dev/null; then
+  if [ ! -f "$archive" ] || ! printf '%s  %s\n' "$base_sha256" "$archive" | sha256sum --check --status 2>/dev/null; then
     download=$(mktemp "$cache/.base-download.XXXXXX")
     # Old releases may move to the official archive; the pinned hash is unchanged.
     if ! curl --fail --silent --show-error --location --retry 3 --connect-timeout 20 --max-time 600 \
