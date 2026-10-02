@@ -1,0 +1,20 @@
+# Merge this section into CLIProxyAPI config.yaml; do not replace other settings.
+plugins:
+  enabled: true
+  dir: ./plugins
+  configs:
+    openai-oauth:
+      enabled: true
+      model_prefix: "oauth" # Trailing / is optional; "" disables the prefix.
+      models: [] # Optional allowlist of {name, alias?}; empty discovers all eligible models.
+      # models:
+      #   - name: gpt-6-sol # Exposed as oauth/gpt-6-sol, if eligible.
+      #   - name: gpt-6-sol
+      #     alias: coding # Explicit aliases replace the entire prefixed ID.
+      models_excluded: [] # Example: ["text-embedding-", "whisper-"]
+      priority: 0
+      CLIENT_ID: "env:CLIENT_ID"
+      CLIENT_SECRET: "env:CLIENT_SECRET"
+      CLIENT_SCOPE: "env:CLIENT_SCOPE"
+      TOKEN_URL: "env:TOKEN_URL"
+      API_URL: "env:API_URL"
