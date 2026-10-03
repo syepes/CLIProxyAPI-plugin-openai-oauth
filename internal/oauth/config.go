@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/url"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -41,14 +42,14 @@ func Resolve(value, fallback string) (string, error) {
 		return v, nil
 	}
 	if path, ok := strings.CutPrefix(value, "file:"); ok {
-		if !strings.HasPrefix(path, "/") {
+		if !filepath.IsAbs(path) {
 			return "", errors.New("credential file path must be absolute")
 		}
 		before, err := os.Lstat(path)
 		if err != nil {
 			return "", errors.New("cannot inspect credential file")
 		}
-		if !before.Mode().IsRegular() || before.Mode().Perm()&0077 != 0 {
+		if !before.Mode().IsRegular() || permissionsTooOpen(before.Mode()) {
 			return "", errors.New("credential file must be regular, not a symlink, and owner-only (0600 or 0400)")
 		}
 		f, err := os.Open(path)
@@ -57,7 +58,7 @@ func Resolve(value, fallback string) (string, error) {
 		}
 		defer f.Close()
 		after, err := f.Stat()
-		if err != nil || !os.SameFile(before, after) || after.Mode().Perm()&0077 != 0 {
+		if err != nil || !os.SameFile(before, after) || permissionsTooOpen(after.Mode()) {
 			return "", errors.New("credential file changed while opening")
 		}
 		data, err := io.ReadAll(io.LimitReader(f, 65537))

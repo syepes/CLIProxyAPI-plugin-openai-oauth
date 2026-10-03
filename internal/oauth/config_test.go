@@ -3,6 +3,7 @@ package oauth
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 )
 
@@ -30,14 +31,26 @@ func TestCredentialReferences(t *testing.T) {
 	if v, err := Resolve("file:"+path, ""); err != nil || v != "sensitive" {
 		t.Fatal("file reference failed")
 	}
-	if err := os.Chmod(path, 0644); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := Resolve("file:"+path, ""); err == nil {
-		t.Fatal("world-readable credential accepted")
+	if runtime.GOOS != "windows" {
+		// os.Chmod on Windows only toggles the read-only attribute from the
+		// owner-write bit; 0644 keeps that bit set, so this leaves the file's
+		// actual access control (and Resolve's acceptance of it) unchanged.
+		if err := os.Chmod(path, 0644); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := Resolve("file:"+path, ""); err == nil {
+			t.Fatal("world-readable credential accepted")
+		}
 	}
 	link := path + "-link"
 	if err := os.Symlink(path, link); err != nil {
+		// Creating a symlink on Windows needs Developer Mode or an elevated
+		// process (SeCreateSymbolicLinkPrivilege), which hosted CI runners
+		// grant inconsistently; this is a platform limitation, not something
+		// Resolve controls, so skip rather than fail the build on it.
+		if runtime.GOOS == "windows" {
+			t.Skipf("cannot create symlink: %v", err)
+		}
 		t.Fatal(err)
 	}
 	if _, err := Resolve("file:"+link, ""); err == nil {

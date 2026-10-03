@@ -4,7 +4,7 @@
 
 A native Go plugin that connects CLIProxyAPI to an OAuth protected, OpenAI compatible API.
 It manages access tokens automatically and runs inside the host, not as a separate HTTP proxy.
-Supported platforms are Linux and macOS on AMD64/ARM64, and FreeBSD on AMD64.
+Supported platforms are Linux and macOS on AMD64/ARM64, FreeBSD on AMD64, and Windows on AMD64.
 
 The plugin uses OAuth application credentials, not browser login.
 Each plugin instance configures one OAuth application and does not create an account in the host's OAuth Auth Files list.
