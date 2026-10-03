@@ -35,7 +35,7 @@ case "$1" in
     test "$#" = 8
     test "$2" = ./cmd/checklib
     test "$3" = -path
-    case "$TEST_TARGET_GOOS" in darwin) ext=dylib ;; *) ext=so ;; esac
+    case "$TEST_TARGET_GOOS" in darwin) ext=dylib ;; windows) ext=dll ;; *) ext=so ;; esac
     test "$4" = "dist/$TEST_TARGET_GOOS/$TEST_TARGET_GOARCH/openai-oauth.$ext"
     test "$5" = -goos
     test "$6" = "$TEST_TARGET_GOOS"
@@ -62,3 +62,4 @@ run_case linux arm64 freebsd amd64
 run_case darwin arm64 freebsd amd64
 run_case linux amd64 linux amd64
 run_case darwin arm64 darwin arm64
+run_case linux amd64 windows amd64

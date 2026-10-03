@@ -3,7 +3,7 @@ GOOS ?= $(shell $(GO) env GOOS)
 GOARCH ?= $(shell $(GO) env GOARCH)
 VERSION ?= 0.1.0
 REPOSITORY ?= https://github.com/syepes/CLIProxyAPI-openai-oauth
-EXT := $(if $(filter darwin,$(GOOS)),dylib,so)
+EXT := $(if $(filter darwin,$(GOOS)),dylib,$(if $(filter windows,$(GOOS)),dll,so))
 LIBRARY := dist/$(GOOS)/$(GOARCH)/openai-oauth.$(EXT)
 LDFLAGS := -s -w -X cliproxyapi-oauth/internal/plugin.Version=$(VERSION) -X cliproxyapi-oauth/internal/plugin.Repository=$(REPOSITORY)
 
@@ -40,7 +40,7 @@ freebsd:
 	VERSION='$(VERSION)' REPOSITORY='$(REPOSITORY)' ./scripts/build-freebsd.sh
 
 check-target:
-	@case '$(GOOS)/$(GOARCH)' in linux/amd64|linux/arm64|darwin/amd64|darwin/arm64|freebsd/amd64) ;; *) echo 'Supported targets: linux/darwin amd64/arm64 and freebsd/amd64'; exit 1 ;; esac
+	@case '$(GOOS)/$(GOARCH)' in linux/amd64|linux/arm64|darwin/amd64|darwin/arm64|freebsd/amd64|windows/amd64) ;; *) echo 'Supported targets: linux/darwin amd64/arm64, freebsd/amd64 and windows/amd64'; exit 1 ;; esac
 
 .PHONY: audit
 audit:
