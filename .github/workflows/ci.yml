@@ -69,6 +69,9 @@ jobs:
             dist/**/*.dll
           if-no-files-found: error
 
+  native-integration:
+    uses: ./.github/workflows/native-integration.yml
+
   goreleaser-check:
     runs-on: ubuntu-26.04
     steps:
