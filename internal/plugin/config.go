@@ -15,7 +15,7 @@ import (
 
 const ID = "openai-oauth"
 
-var Version = "0.1.0"
+var Version = "0.1.1"
 
 // Repository is replaced by the release workflow; syepes marks local development builds.
 var Repository = "https://github.com/syepes/CLIProxyAPI-openai-oauth"

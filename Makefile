@@ -1,7 +1,7 @@
 GO ?= go
 GOOS ?= $(shell $(GO) env GOOS)
 GOARCH ?= $(shell $(GO) env GOARCH)
-VERSION ?= 0.1.0
+VERSION ?= 0.1.1
 REPOSITORY ?= https://github.com/syepes/CLIProxyAPI-openai-oauth
 EXT := $(if $(filter darwin,$(GOOS)),dylib,$(if $(filter windows,$(GOOS)),dll,so))
 LIBRARY := dist/$(GOOS)/$(GOARCH)/openai-oauth.$(EXT)

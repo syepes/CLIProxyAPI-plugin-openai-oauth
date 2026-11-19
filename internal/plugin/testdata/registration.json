@@ -74,7 +74,7 @@
     ],
     "GitHubRepository": "https://github.com/syepes/CLIProxyAPI-openai-oauth",
     "Name": "OpenAI OAuth Provider",
-    "Version": "0.1.0"
+    "Version": "0.1.1"
   },
   "schema_version": 6
 }
